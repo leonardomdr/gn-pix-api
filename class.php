@@ -255,20 +255,20 @@ class GNPixApi {
     }
 
     private function brCode($request) {
-        $point_of_initiation_method = '12';
+        $point_of_initiation_method = ($this->uniqueQrCode) ? '12' : '11';
         $gui = 'BR.GOV.BCB.PIX';
         $url = $request['location'];
         $merchant_account_information = 
             '00'.str_pad(strlen($gui), 2, '0', STR_PAD_LEFT).$gui
             .'25'.str_pad(strlen($url), 2, '0', STR_PAD_LEFT).$url;
         $merchant_name = mb_substr($this->merchantName, 0, 25);
-        $merchant_city = $this->merchantCity;
+        $merchant_city = mb_substr($this->merchantCity, 0, 15);
         $additional_data_field_1_id = '05';
         $additional_data_field_1_val = '***';
         $additional_data_field = $additional_data_field_1_id.str_pad(strlen($additional_data_field_1_val), 2, '0', STR_PAD_LEFT).$additional_data_field_1_val;
 
         $stringQrCode = '000201' // Header: pix version
-            . (($this->uniqueQrCode) ? '01'.str_pad(strlen($point_of_initiation_method), 2, '0', STR_PAD_LEFT).$point_of_initiation_method : '')
+            . '01'.str_pad(strlen($point_of_initiation_method), 2, '0', STR_PAD_LEFT).$point_of_initiation_method
             . '26'.str_pad(strlen($merchant_account_information), 2, '0', STR_PAD_LEFT).$merchant_account_information
             . '52040000' // Category code: none
             . '5303986' // Currency: BRL
