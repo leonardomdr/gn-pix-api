@@ -256,7 +256,7 @@ class GNPixApi {
 
     private function brCode($request) {
         $point_of_initiation_method = ($this->uniqueQrCode) ? '12' : '11';
-        $gui = 'BR.GOV.BCB.PIX';
+        $gui = 'br.gov.bcb.pix';
         $url = $request['location'];
         $merchant_account_information = 
             '00'.str_pad(strlen($gui), 2, '0', STR_PAD_LEFT).$gui
