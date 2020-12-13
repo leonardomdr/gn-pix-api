@@ -38,3 +38,13 @@ Extensões
   - $txid (txid informado e/ou retornado na geração da cobrança)
 - selectPixHistory($data)
   - $data (conforme https://dev.gerencianet.com.br/docs#section-consultar-lista-de-cobran-as)
+- selectPixPayment($e2eid)
+  - $e2eid (endToEndId do pagamento PIX)
+- refundPixByTxid($txid, $refundId = '', $value = '')
+  - $txid (txid informado e/ou retornado na geração da cobrança)
+  - $value (valor do reembolso, deixe em branco para reembolso integral)
+  - ``Atenção: esta função só funcionará se o txId informado tiver apenas 1 pagamento PIX``
+- refundPix($e2eid, $refundId = '1', $value = '')
+  - $e2eid (endToEndId do pagamento PIX)
+  - $refundId (id único de reembolso)
+  - $value (valor do reembolso, deixe em branco para reembolso integral)

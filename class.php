@@ -352,11 +352,11 @@ class GNPixApi {
         return $this->pix($data, $txid, 'PUT');
     }
 
-    public function updatePix($data, $txid = '') {
+    public function updatePix($data, $txid) {
         return $this->pix($data, $txid, 'PATCH');
     }
 
-    public function selectPix($txid = '') {
+    public function selectPix($txid) {
         return $this->pix("", $txid, 'GET');
     }
 
@@ -368,6 +368,50 @@ class GNPixApi {
 
         if ($this->lastStatusCode != "200") {
             error_log($this->generateErrorDescription('Error Selecting Pix History', $request));
+        }
+
+        return $request;
+    }
+
+    public function selectPixPayment($e2eid) {
+        $this->setHeader("Authorization: ".$this->getOAuthToken());
+        $this->setHeader("Content-Type: application/json");
+
+        $request = $this->curlRequest('GET', "/v2/pix/".$e2eid);
+        if ($this->lastStatusCode != "200") {
+            error_log($this->generateErrorDescription('Error Selecting Pix Payment', $request));
+        }
+
+        return $request;
+    }
+
+    public function refundPixByTxid($txid, $value = '') {
+        $request = $this->selectPix($txid);
+
+        if (isset($request['data']['pix'][1]['endToEndId'])) {
+            throw new Exception("Cant refund pix by txId (more than one endToEndId)", 1);            
+        }
+
+        $e2eid = $request['data']['pix'][0]['endToEndId'];
+        if ($value == '') {
+            $value = $request['data']['pix'][0]['valor'];
+        }
+
+        return $this->refundPix($e2eid, '1', $value);
+    }
+
+    public function refundPix($e2eid, $refundId = '1', $value = '') {
+        if ($value == '') {
+            $request = $this->selectPixPayment($e2eid);
+            $value = $request['valor'];
+        }
+
+        $this->setHeader("Authorization: ".$this->getOAuthToken());
+        $this->setHeader("Content-Type: application/json");
+        
+        $request = $this->curlRequest('PUT', "/v2/pix/".$e2eid."/devolucao/".$refundId, json_encode(array("valor" => $value)));
+        if ($this->lastStatusCode != "200") {
+            error_log($this->generateErrorDescription('Error Refunding Pix', $request));
         }
 
         return $request;
