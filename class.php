@@ -277,7 +277,7 @@ class GNPixApi {
             . '60'.str_pad(strlen($merchant_city), 2, '0', STR_PAD_LEFT).$merchant_city
             . '62'.str_pad(strlen($additional_data_field), 2, '0', STR_PAD_LEFT).$additional_data_field
             . '6304';
-        $crc16 = $this->calcCRC16($stringQrCode);
+        $crc16 = str_pad($this->calcCRC16($stringQrCode), 4, '0', STR_PAD_LEFT);
 
         return $stringQrCode.$crc16;
     }
